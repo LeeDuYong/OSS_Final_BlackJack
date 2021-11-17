@@ -110,6 +110,8 @@ function game_end(bd,player_sum,dealer_sum){
     })
     cm=document.getElementById("current money")
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
+    start=document.getElementById("start");
+    start.disabled=false;
 }
 function player_bust(bd,player_sum){
     sp=document.createElement("span")
@@ -130,6 +132,8 @@ function player_bust(bd,player_sum){
     current_money-=current_bet
     cm=document.getElementById("current money")
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
+    start=document.getElementById("start");
+    start.disabled=false;
 }
 function check_ace(sum,a_cnt){
     if(a_cnt==0){
