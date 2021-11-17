@@ -4,6 +4,15 @@ let player_cards = [];
 let current_money= 1000;
 let current_bet= 100;
 let current_result= [0,0,0];
+
+document.querySelectorAll("button").forEach(btn=>{
+    if (btn.id == "up" ||btn.id == "down" || btn.id == "start"||btn.id == "exit"){
+        btn.disabled=false;
+    }
+    else{
+        btn.disabled=true;
+    }
+})
 function initdeck(){
     current_deck = [];
     dealer_cards=[];
@@ -127,7 +136,7 @@ start_button.addEventListener("click",()=>{
     clear();
     initdeck();
     document.querySelectorAll("button").forEach(btn=>{
-        if (btn.id == "up" ||btn.id == "down"){
+        if (btn.id == "up" ||btn.id == "down"||btn.id=="start"){
             btn.disabled=true;
         }
         else{
