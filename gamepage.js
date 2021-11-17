@@ -1,6 +1,9 @@
 let current_deck = [];
 let dealer_cards = [];
 let player_cards = [];
+let current_money= 1000;
+let current_bet= 100;
+let current_result= [0,0,0];
 function initdeck(){
     current_deck = [];
     dealer_cards=[];
@@ -50,18 +53,27 @@ function game_end(bd,player_sum,dealer_sum){
     sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
     sp.innerHTML="딜러 카드 합 : "+dealer_sum+"\n"+"나의 카드 합 : "+player_sum+"\n"
     if (player_sum>21)
-        sp.innerText=sp.innerText+"졌습니다..."
+        {sp.innerText=sp.innerText+"졌습니다..."
+        current_result[0]+=1;
+        current_money-=current_bet;}
     else if (dealer_sum>21)
-        sp.innerText=sp.innerText+"이겼습니다!"
+        {sp.innerText=sp.innerText+"이겼습니다!"
+        current_result[2]+=1;
+        current_money+=current_bet}
     else{
         if (dealer_sum==player_sum){
             sp.innerText=sp.innerText+"비겼습니다."
+            current_result[1]+=1;
         }
         else if (dealer_sum>player_sum){
             sp.innerText=sp.innerText+"졌습니다..."
+            current_result[0]+=1;
+            current_money-=current_bet
         }
         else{
             sp.innerText=sp.innerText+"이겼습니다!"
+            current_result[2]+=1;
+            current_money+=current_bet
         }
     }
     bd.appendChild(sp)
@@ -70,7 +82,12 @@ function game_end(bd,player_sum,dealer_sum){
         if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
             btn.disabled=true;
         }
+        if (btn.id == "up" ||btn.id == "down"){
+            btn.disabled=false;
+        }
     })
+    cm=document.getElementById("current money")
+    cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
 }
 function player_bust(bd,player_sum){
     sp=document.createElement("span")
@@ -83,7 +100,14 @@ function player_bust(bd,player_sum){
         if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
             btn.disabled=true;
         }
+        if (btn.id == "up" ||btn.id == "down"){
+            btn.disabled=false;
+        }
     })
+    current_result[0]+=1;
+    current_money-=current_bet
+    cm=document.getElementById("current money")
+    cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
 }
 function dealer_bust(bd,dealer_sum){
     sp=document.createElement("span")
@@ -96,7 +120,14 @@ function dealer_bust(bd,dealer_sum){
         if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
             btn.disabled=true;
         }
+        if (btn.id == "up" ||btn.id == "down"){
+            btn.disabled=false;
+        }
     })
+    current_result[2]+=1;
+    current_money+=current_bet
+    cm=document.getElementById("current money")
+    cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
 }
 function check_ace(sum,a_cnt){
     if(a_cnt==0){
@@ -116,7 +147,12 @@ start_button.addEventListener("click",()=>{
     clear();
     initdeck();
     document.querySelectorAll("button").forEach(btn=>{
-        btn.disabled=false;
+        if (btn.id == "up" ||btn.id == "down"){
+            btn.disabled=true;
+        }
+        else{
+            btn.disabled=false;
+        }
     })
     var fourcards=[];
     var current_length=current_deck.length;
@@ -277,4 +313,16 @@ stay_button.addEventListener("click",()=>{
         setTimeout(show_card_img,1000*(i-len+1),bd,i,dealer_cards,player_cards,'dealer')
     }
     setTimeout(game_end,1000*(dealer_cards.length-len+1),bd,player_sum,dealer_sum)
+})
+let up_button = document.querySelector("#up");
+up_button.addEventListener("click",()=>{
+    current_bet+=100;
+    cm=document.getElementById("bet amount")
+    cm.innerText = "현재 배팅액 : "+current_bet+" 만원"
+})
+let down_button = document.querySelector("#down");
+down_button.addEventListener("click",()=>{
+    current_bet-=100;
+    cm=document.getElementById("bet amount")
+    cm.innerText = "현재 배팅액 : "+current_bet+" 만원"
 })
