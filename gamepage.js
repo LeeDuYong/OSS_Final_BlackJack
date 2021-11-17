@@ -65,6 +65,12 @@ function game_end(bd,player_sum,dealer_sum){
         }
     }
     bd.appendChild(sp)
+    btnlist = ['hit','stay','double down','surrender']
+    document.querySelectorAll("button").forEach(btn=>{
+        if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
+            btn.disabled=true;
+        }
+    })
 }
 function player_bust(bd,player_sum){
     sp=document.createElement("span")
@@ -72,6 +78,12 @@ function player_bust(bd,player_sum){
     sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
     sp.innerText="나의 카드 합 : "+player_sum+"\n"+"졌습니다..."+"\n"
     bd.appendChild(sp)
+    btnlist = ['hit','stay','double down','surrender']
+    document.querySelectorAll("button").forEach(btn=>{
+        if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
+            btn.disabled=true;
+        }
+    })
 }
 function dealer_bust(bd,dealer_sum){
     sp=document.createElement("span")
@@ -79,6 +91,12 @@ function dealer_bust(bd,dealer_sum){
     sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
     sp.innerText="딜러 카드 합 : "+dealer_sum+"\n"+"이겼습니다!"+"\n"
     bd.appendChild(sp)
+    btnlist = ['hit','stay','double down','surrender']
+    document.querySelectorAll("button").forEach(btn=>{
+        if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
+            btn.disabled=true;
+        }
+    })
 }
 function check_ace(sum,a_cnt){
     if(a_cnt==0){
@@ -97,6 +115,9 @@ let start_button = document.querySelector("#start");
 start_button.addEventListener("click",()=>{
     clear();
     initdeck();
+    document.querySelectorAll("button").forEach(btn=>{
+        btn.disabled=false;
+    })
     var fourcards=[];
     var current_length=current_deck.length;
     while(current_deck.length>current_length-4){
@@ -213,8 +234,18 @@ stay_button.addEventListener("click",()=>{
             dealer_sum=sum_cnt[0]
             dealer_ace_cnt=sum_cnt[1]
         }
+        else if(num>=10)
+        {
+            dealer_sum+=10;
+            sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+            dealer_sum=sum_cnt[0]
+            dealer_ace_cnt=sum_cnt[1]
+        }
         else{
             dealer_sum+=num;
+            sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+            dealer_sum=sum_cnt[0]
+            dealer_ace_cnt=sum_cnt[1]
         }
     }
 
