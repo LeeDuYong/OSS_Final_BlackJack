@@ -109,26 +109,6 @@ function player_bust(bd,player_sum){
     cm=document.getElementById("current money")
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
 }
-function dealer_bust(bd,dealer_sum){
-    sp=document.createElement("span")
-    sp.className='temp'
-    sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
-    sp.innerText="딜러 카드 합 : "+dealer_sum+"\n"+"이겼습니다!"+"\n"
-    bd.appendChild(sp)
-    btnlist = ['hit','stay','double down','surrender']
-    document.querySelectorAll("button").forEach(btn=>{
-        if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
-            btn.disabled=true;
-        }
-        if (btn.id == "up" ||btn.id == "down"){
-            btn.disabled=false;
-        }
-    })
-    current_result[2]+=1;
-    current_money+=current_bet
-    cm=document.getElementById("current money")
-    cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
-}
 function check_ace(sum,a_cnt){
     if(a_cnt==0){
         return [sum,a_cnt];
@@ -179,35 +159,12 @@ start_button.addEventListener("click",()=>{
 
 let hit_button = document.querySelector("#hit");
 hit_button.addEventListener("click",()=>{
-    var twocards=[];
-    var current_length=current_deck.length;
-    while(current_deck.length>current_length-2){
-        twocards.push(current_deck.splice(Math.floor(Math.random()*current_deck.length),1)[0])
-    }
-    dealer_cards.push(twocards[0])
-    player_cards.push(twocards[1])
-    var len = dealer_cards.length
+    player_cards.push(current_deck.splice(Math.floor(Math.random()*current_deck.length),1)[0])
+    var len = player_cards.length
     let bd = document.querySelector("body");
-    show_card_img(bd,len-1,dealer_cards,player_cards,'dealer')
     show_card_img(bd,len-1,dealer_cards,player_cards,'player')
-    var dealer_sum=0
-    var dealer_ace_cnt=0
     var player_sum=0
     var player_ace_cnt=0
-    for (var i=0;i<len;i++){
-        if(dealer_cards[i]['num']==1){
-            dealer_sum+=11;
-            dealer_ace_cnt+=1
-            }
-        else if(dealer_cards[i]['num']>=10){
-            dealer_sum+=10;
-        }
-        else 
-            dealer_sum+=dealer_cards[i]['num'];
-    }
-    sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
-    dealer_sum=sum_cnt[0]
-    dealer_ace_cnt=sum_cnt[1]
     for (var i=0;i<player_cards.length;i++){
         if(player_cards[i]['num']==1){
             player_sum+=11;
@@ -224,19 +181,7 @@ hit_button.addEventListener("click",()=>{
     if (player_sum>21){
         player_bust(bd,player_sum)
     }
-    else if(dealer_sum>21){
-        document.querySelectorAll("img").forEach(img=>{
-            if(img.id.includes("dealer")){
-                img.remove();
-            }
-        })
-        for(var i=0;i<dealer_cards.length;i++){
-            show_card_img(bd,i,dealer_cards,player_cards,'dealer')
-        }
-        dealer_bust(bd,dealer_sum)
-    }
 })
-
 
 let stay_button = document.querySelector("#stay");
 stay_button.addEventListener("click",()=>{
