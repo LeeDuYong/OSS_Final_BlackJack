@@ -14,8 +14,10 @@ function initdeck(){
         }
     }
 }
-function show_card_img(bd,idx,dealer_cards,player_cards,dorp){
+
+function show_card_img(bd,idx,dealer_cards,player_cards,dorp,anim=true){
     let img = document.createElement("img");
+    let opacity=0
     if (dorp=='dealer'){
         a=dealer_cards[idx]['shape']
         b=dealer_cards[idx]['num']
@@ -29,14 +31,25 @@ function show_card_img(bd,idx,dealer_cards,player_cards,dorp){
     img.width=85;
     img.className="rounded"
     if (dorp=='dealer'){
-        img.style = "position: absolute; top:105px; left:"+String((365+(idx)*17))+"px;"
+        img.style = "position: absolute; top:105px; left:"+String((365+(idx)*17))+"px; opacity:0"
         img.id='dealer_card'+(idx+1);
     }
     else{
-        img.style = "position: absolute; top:375px; left:"+String((365+(idx)*17))+"px;"
+        img.style = "position: absolute; top:375px; left:"+String((365+(idx)*17))+"px;opacity:0"
         img.id='player_card'+(idx+1);
     }
-    bd.appendChild(img);
+    bd.appendChild(img)
+    if (anim)
+    {let timer = setInterval(()=>{
+        opacity += 0.1;
+        img.style.opacity=opacity;
+        if (opacity==1){
+            clearInterval(timer)
+        }
+    },100);}
+    else{
+        img.style.opacity=1;
+    }
 }
 function clear(){
     document.querySelectorAll("img").forEach(img=>{
@@ -179,7 +192,7 @@ hit_button.addEventListener("click",()=>{
     player_sum=sum_cnt[0]
     player_ace_cnt=sum_cnt[1]
     if (player_sum>21){
-        player_bust(bd,player_sum)
+        setTimeout(player_bust,1000,bd,player_sum)
     }
 })
 
@@ -187,10 +200,9 @@ let stay_button = document.querySelector("#stay");
 stay_button.addEventListener("click",()=>{
     var dealer_sum = 0
     var player_sum = 0
-    var len = dealer_cards.length
     var dealer_ace_cnt = 0
     var player_ace_cnt = 0
-    for (var i=0;i<len;i++){
+    for (var i=0;i<2;i++){
         if(dealer_cards[i]['num']==1){
             dealer_sum+=11;
             dealer_ace_cnt+=1
@@ -246,18 +258,14 @@ stay_button.addEventListener("click",()=>{
     
 
     let bd = document.querySelector("body");
-    document.querySelectorAll("img").forEach(img=>{
-        if(img.id.includes("dealer")){
-            img.remove();
-        }
-    })
-    for(var i=0;i<len;i++){
-        show_card_img(bd,i,dealer_cards,player_cards,'dealer')
+    document.getElementById("dealer_card1").remove();
+    for(var i=0;i<2;i++){
+        show_card_img(bd,i,dealer_cards,player_cards,'dealer',false)
     }
-    for(var i=len;i<dealer_cards.length;i++){
-        setTimeout(show_card_img,1000*(i-len+1),bd,i,dealer_cards,player_cards,'dealer')
+    for(var i=2;i<dealer_cards.length;i++){
+        setTimeout(show_card_img,1000*(i-1),bd,i,dealer_cards,player_cards,'dealer')
     }
-    setTimeout(game_end,1000*(dealer_cards.length-len+1),bd,player_sum,dealer_sum)
+    setTimeout(game_end,1000*(dealer_cards.length-1),bd,player_sum,dealer_sum)
 })
 let up_button = document.querySelector("#up");
 up_button.addEventListener("click",()=>{
