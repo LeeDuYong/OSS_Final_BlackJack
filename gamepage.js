@@ -4,6 +4,7 @@ let player_cards = [];
 let current_money= 1000;
 let current_bet= 100;
 let current_result= [0,0,0];
+let double=false;
 
 var startsound= new Audio("card_sound/cardPlace.mp3");
 var cardsound = new Audio("card_sound/cardSlide.mp3");
@@ -64,6 +65,7 @@ function show_card_img(bd,idx,dealer_cards,player_cards,dorp,anim=true){
     }
 }
 function clear(){
+    double=false;
     document.querySelectorAll("img").forEach(img=>{
         img.remove();
     })
@@ -77,28 +79,61 @@ function game_end(bd,player_sum,dealer_sum){
     sp.className='temp'
     sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
     sp.innerHTML="딜러 카드 합 : "+dealer_sum+"\n"+"나의 카드 합 : "+player_sum+"\n"
-    if (player_sum>21)
-        {sp.innerText=sp.innerText+"졌습니다..."
-        current_result[0]+=1;
-        current_money-=current_bet;}
-    else if (dealer_sum>21)
-        {sp.innerText=sp.innerText+"이겼습니다!"
-        current_result[2]+=1;
-        current_money+=current_bet}
-    else{
-        if (dealer_sum==player_sum){
-            sp.innerText=sp.innerText+"비겼습니다."
-            current_result[1]+=1;
-        }
-        else if (dealer_sum>player_sum){
+    if(double===true)
+    {
+        if (player_sum>21)
+        {   
             sp.innerText=sp.innerText+"졌습니다..."
             current_result[0]+=1;
-            current_money-=current_bet
+            current_money-=current_bet*2;
         }
-        else{
+        else if (dealer_sum>21)
+        {   
             sp.innerText=sp.innerText+"이겼습니다!"
             current_result[2]+=1;
-            current_money+=current_bet
+            current_money+=current_bet*2;
+        }
+        else{
+            if (dealer_sum==player_sum){
+                sp.innerText=sp.innerText+"비겼습니다."
+                current_result[1]+=1;
+            }
+            else if (dealer_sum>player_sum){
+                sp.innerText=sp.innerText+"졌습니다..."
+                current_result[0]+=1;
+                current_money-=current_bet*2;
+            }
+            else{
+                sp.innerText=sp.innerText+"이겼습니다!"
+                current_result[2]+=1;
+                current_money+=current_bet*2;
+            }
+        }
+    }
+    else{
+        if (player_sum>21)
+            {sp.innerText=sp.innerText+"졌습니다..."
+            current_result[0]+=1;
+            current_money-=current_bet;}
+        else if (dealer_sum>21)
+            {sp.innerText=sp.innerText+"이겼습니다!"
+            current_result[2]+=1;
+            current_money+=current_bet}
+        else{
+            if (dealer_sum==player_sum){
+                sp.innerText=sp.innerText+"비겼습니다."
+                current_result[1]+=1;
+            }
+            else if (dealer_sum>player_sum){
+                sp.innerText=sp.innerText+"졌습니다..."
+                current_result[0]+=1;
+                current_money-=current_bet
+            }
+            else{
+                sp.innerText=sp.innerText+"이겼습니다!"
+                current_result[2]+=1;
+                current_money+=current_bet
+            }
         }
     }
     bd.appendChild(sp)
@@ -132,7 +167,12 @@ function player_bust(bd,player_sum){
         }
     })
     current_result[0]+=1;
-    current_money-=current_bet
+    if(double===true){
+        current_money-=current_bet*2;
+    }
+    else{
+        current_money-=current_bet
+    }
     cm=document.getElementById("current money")
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
     start=document.getElementById("start");
@@ -287,7 +327,6 @@ stay_button.addEventListener("click",()=>{
     player_sum=sum_cnt[0]
     player_ace_cnt=sum_cnt[1]
     
-
     let bd = document.querySelector("body");
     document.getElementById("dealer_card1").remove();
     for(var i=0;i<2;i++){
@@ -314,4 +353,82 @@ let surrender_button = document.querySelector("#surrender");
 surrender_button.addEventListener("click",()=>{
     let bd = document.querySelector("body");
     setTimeout(player_surrender,1000,bd);
+})
+let doubledown_button=document.querySelector("#doubledown");
+doubledown_button.addEventListener("click",()=>{
+    player_cards.push(current_deck.splice(Math.floor(Math.random()*current_deck.length),1)[0])
+    cardsound.play();
+    double=true;
+    var len = player_cards.length
+    let bd = document.querySelector("body");
+    show_card_img(bd,len-1,dealer_cards,player_cards,'player')
+    var dealer_sum = 0
+    var player_sum = 0
+    var dealer_ace_cnt = 0
+    var player_ace_cnt = 0
+    for (var i=0;i<2;i++){
+        if(dealer_cards[i]['num']==1){
+            dealer_sum+=11;
+            dealer_ace_cnt+=1
+            }
+        else if(dealer_cards[i]['num']>=10){
+            dealer_sum+=10;
+        }
+        else 
+            dealer_sum+=dealer_cards[i]['num'];
+    }
+    sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+    dealer_sum=sum_cnt[0]
+    dealer_ace_cnt=sum_cnt[1]
+    
+    while(dealer_sum<=16){
+        dealer_cards.push(current_deck.splice(Math.floor(Math.random()*current_deck.length),1)[0])
+        num = dealer_cards[dealer_cards.length-1]['num']
+        if (num==1){
+            dealer_ace_cnt+=1;
+            dealer_sum+=11;
+            sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+            dealer_sum=sum_cnt[0]
+            dealer_ace_cnt=sum_cnt[1]
+        }
+        else if(num>=10)
+        {
+            dealer_sum+=10;
+            sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+            dealer_sum=sum_cnt[0]
+            dealer_ace_cnt=sum_cnt[1]
+        }
+        else{
+            dealer_sum+=num;
+            sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+            dealer_sum=sum_cnt[0]
+            dealer_ace_cnt=sum_cnt[1]
+        }
+    }
+    for (var i=0;i<player_cards.length;i++){
+        if(player_cards[i]['num']==1){
+            player_sum+=11;
+            player_ace_cnt+=1;
+        }
+        else if(player_cards[i]['num']>=10){
+            player_sum+=10;
+        }else
+            player_sum+=player_cards[i]['num'];
+    }
+    sum_cnt=check_ace(player_sum,player_ace_cnt)
+    player_sum=sum_cnt[0]
+    player_ace_cnt=sum_cnt[1]
+    if (player_sum>21){
+        setTimeout(player_bust,1000,bd,player_sum)
+    }
+    else{
+        document.getElementById("dealer_card1").remove();
+        for(var i=0;i<2;i++){
+            show_card_img(bd,i,dealer_cards,player_cards,'dealer',false)
+        }
+        for(var i=2;i<dealer_cards.length;i++){
+            setTimeout(show_card_img,1000*(i-1),bd,i,dealer_cards,player_cards,'dealer')
+        }
+        setTimeout(game_end,1000*(dealer_cards.length-1),bd,player_sum,dealer_sum)
+    }
 })
