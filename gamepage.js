@@ -5,6 +5,9 @@ let current_money= 1000;
 let current_bet= 100;
 let current_result= [0,0,0];
 
+var startsound= new Audio("card_sound/cardPlace.mp3");
+var cardsound = new Audio("card_sound/cardSlide.mp3");
+
 document.querySelectorAll("button").forEach(btn=>{
     if (btn.id == "up" ||btn.id == "down" || btn.id == "start"||btn.id == "exit"){
         btn.disabled=false;
@@ -135,6 +138,19 @@ function player_bust(bd,player_sum){
     start=document.getElementById("start");
     start.disabled=false;
 }
+function player_surrender(bd){
+    sp=document.createElement("span")
+    sp.className='temp'
+    sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
+    sp.innerText="Surrender\n"+"졌습니다..."+"\n"
+    bd.appendChild(sp)
+    current_result[0]+=1;
+    current_money-=current_bet/2;
+    cm=document.getElementById("current money")
+    cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
+    start=document.getElementById("start");
+    start.disabled=false;
+}
 function check_ace(sum,a_cnt){
     if(a_cnt==0){
         return [sum,a_cnt];
@@ -152,6 +168,7 @@ let start_button = document.querySelector("#start");
 start_button.addEventListener("click",()=>{
     clear();
     initdeck();
+    startsound.play();
     document.querySelectorAll("button").forEach(btn=>{
         if (btn.id == "up" ||btn.id == "down"||btn.id=="start"){
             btn.disabled=true;
@@ -186,6 +203,7 @@ start_button.addEventListener("click",()=>{
 let hit_button = document.querySelector("#hit");
 hit_button.addEventListener("click",()=>{
     player_cards.push(current_deck.splice(Math.floor(Math.random()*current_deck.length),1)[0])
+    cardsound.play();
     var len = player_cards.length
     let bd = document.querySelector("body");
     show_card_img(bd,len-1,dealer_cards,player_cards,'player')
@@ -291,4 +309,9 @@ down_button.addEventListener("click",()=>{
     current_bet-=100;
     cm=document.getElementById("bet amount")
     cm.innerText = "현재 배팅액 : "+current_bet+" 만원"
+})
+let surrender_button = document.querySelector("#surrender");
+surrender_button.addEventListener("click",()=>{
+    let bd = document.querySelector("body");
+    setTimeout(player_surrender,1000,bd);
 })
