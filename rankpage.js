@@ -16,18 +16,47 @@ function show_user_ranking(){
             return 1;
         }
     })
-    let count = 0;
+    let count = 1;
+    let rankTable = document.querySelector("#rank_table");
+    /*
     user_ranks.forEach(rank => {
-        let rankTable = document.querySelector("#rank_table");
         let row = rankTable.insertRow();
         let cell_rankNum = row.insertCell();
         let cell_userName = row.insertCell();
         let cell_userMoney = row.insertCell();
-        cell_rankNum.innerText =  count + 1;
+        cell_rankNum.innerText =  count;
         cell_userName.innerText = rank.name;
-        cell_userMoney.innerText = rank.money;
+        cell_userMoney.innerText = (rank.money * 10000).toLocaleString('ko-KR');
         count++;
+        if(count > 5){
+            break;
+        }
     })
+    */
+    for(count = 1; count <= user_ranks.length; count++){
+        if(count > 5){
+            break;
+        }
+        let rank = user_ranks[count - 1];
+        let row = rankTable.insertRow();
+        let cell_rankNum = row.insertCell();
+        let cell_userName = row.insertCell();
+        let cell_userMoney = row.insertCell();
+        cell_rankNum.innerText =  count;
+        cell_userName.innerText = rank.name;
+        cell_userMoney.innerText = (rank.money * 10000).toLocaleString('ko-KR');
+    }
+    if(count <= 5){
+        for(let i = count; i <= 5; i++){
+            let row = rankTable.insertRow();
+            let cell_rankNum = row.insertCell();
+            let cell_userName = row.insertCell();
+            let cell_userMoney = row.insertCell();
+            cell_rankNum.innerText =  count;
+            cell_userName.innerText = "-";
+            cell_userMoney.innerText = "-";
+        }
+    }
 }
 window.addEventListener("load", () => {
     show_user_ranking();
