@@ -5,6 +5,8 @@ let current_money= 1000;
 let current_bet= 100;
 let current_result= [0,0,0];
 let double=false;
+let current_nickname;
+let current_details;
 
 var startsound= new Audio("card_sound/cardPlace.mp3");
 var cardsound = new Audio("card_sound/cardSlide.mp3");
@@ -17,6 +19,24 @@ document.querySelectorAll("button").forEach(btn=>{
         btn.disabled=true;
     }
 })
+function loadUsers() {
+    let player = localStorage.getItem("player");
+    if (!player) return;
+
+    let current_player = JSON.parse(player);
+    
+    current_nickname = current_player.name;
+    current_money = current_player.money;
+    current_result = current_player.result;
+}
+window.addEventListener("load", () => {
+    loadUsers();
+    cm=document.getElementById("current money")
+    cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
+    let details = localStorage.getItem("details");
+    if(!details) return;
+    current_details = JSON.parse(details);
+});
 function initdeck(){
     current_deck = [];
     dealer_cards=[];
@@ -150,6 +170,13 @@ function game_end(bd,player_sum,dealer_sum){
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
     start=document.getElementById("start");
     start.disabled=false;
+    localStorage.removeItem("player");
+    let user = {
+        name: current_nickname,
+        money: current_money,
+        result: current_result
+    };
+    localStorage.setItem("player", JSON.stringify(user));
 }
 function player_bust(bd,player_sum){
     sp=document.createElement("span")
@@ -177,6 +204,13 @@ function player_bust(bd,player_sum){
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
     start=document.getElementById("start");
     start.disabled=false;
+    localStorage.removeItem("player");
+    let user = {
+        name: current_nickname,
+        money: current_money,
+        result: current_result
+    };
+    localStorage.setItem("player", JSON.stringify(user));
 }
 function player_surrender(bd){
     sp=document.createElement("span")
@@ -190,6 +224,13 @@ function player_surrender(bd){
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
     start=document.getElementById("start");
     start.disabled=false;
+    localStorage.removeItem("player");
+    let user = {
+        name: current_nickname,
+        money: current_money,
+        result: current_result
+    };
+    localStorage.setItem("player", JSON.stringify(user));
 }
 function check_ace(sum,a_cnt){
     if(a_cnt==0){
@@ -209,9 +250,13 @@ start_button.addEventListener("click",()=>{
     clear();
     initdeck();
     startsound.play();
+    loadUsers();
     document.querySelectorAll("button").forEach(btn=>{
         if (btn.id == "up" ||btn.id == "down"||btn.id=="start"){
             btn.disabled=true;
+        }
+        else if(btn.id == "surrender"){
+            btn.disabled = !(current_details.surrender_rule);
         }
         else{
             btn.disabled=false;
@@ -431,4 +476,21 @@ doubledown_button.addEventListener("click",()=>{
         }
         setTimeout(game_end,1000*(dealer_cards.length-1),bd,player_sum,dealer_sum)
     }
+})
+let exit_button = document.querySelector("#exit");
+exit_button.addEventListener("click",()=>{
+    localStorage.removeItem("player");
+    let user = {
+        name: current_nickname,
+        money: current_money,
+        result: current_result
+    };
+    localStorage.setItem("player", JSON.stringify(user));
+    let user_list = [];
+    let registeredUsers = localStorage.getItem("users");
+    user_list = JSON.parse(registeredUsers);
+    user_list = user_list.filter(u => u.name !== current_nickname);
+    user_list.push(user);
+    localStorage.setItem("users", JSON.stringify(user_list));
+    window.location.href = "mainpage.html";
 })
