@@ -183,8 +183,6 @@ function game_end(bd,player_sum,dealer_sum){
     })
     cm=document.getElementById("current money")
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
-    start=document.getElementById("start");
-    start.disabled=false;
     localStorage.removeItem("player");
     let user = {
         name: current_nickname,
@@ -192,6 +190,11 @@ function game_end(bd,player_sum,dealer_sum){
         result: current_result
     };
     localStorage.setItem("player", JSON.stringify(user));
+    if (current_money>=current_bet)
+    {
+        start=document.getElementById("start");
+        start.disabled=false;
+    }
 }
 function player_bust(bd,player_sum){
     sp=document.createElement("span")
@@ -217,8 +220,11 @@ function player_bust(bd,player_sum){
     }
     cm=document.getElementById("current money")
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
-    start=document.getElementById("start");
-    start.disabled=false;
+    if (current_money>=current_bet)
+    {
+        start=document.getElementById("start");
+        start.disabled=false;
+    }
     localStorage.removeItem("player");
     let user = {
         name: current_nickname,
@@ -246,8 +252,11 @@ function player_surrender(bd){
     current_money-=current_bet/2;
     cm=document.getElementById("current money")
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
-    start=document.getElementById("start");
-    start.disabled=false;
+    if (current_money>=current_bet)
+    {
+        start=document.getElementById("start");
+        start.disabled=false;
+    }
     localStorage.removeItem("player");
     let user = {
         name: current_nickname,
@@ -286,6 +295,10 @@ start_button.addEventListener("click",()=>{
             btn.disabled=false;
         }
     })
+    if (current_money<2*current_bet)
+    {
+        document.querySelector("#doubledown").disabled=true;
+    }
     var fourcards=[];
     var current_length=current_deck.length;
     while(current_deck.length>current_length-4){
@@ -441,10 +454,24 @@ up_button.addEventListener("click",()=>{
     current_bet+=100;
     cm=document.getElementById("bet amount")
     cm.innerText = "현재 배팅액 : "+current_bet+" 만원"
+    if (current_money<current_bet)
+    {
+        start=document.getElementById("start");
+        start.disabled=true;
+    }
 })
 let down_button = document.querySelector("#down");
 down_button.addEventListener("click",()=>{
+    if (current_bet==0)
+    {
+        return;
+    }
     current_bet-=100;
+    if (current_money>=current_bet)
+    {
+        start=document.getElementById("start");
+        start.disabled=false;
+    }
     cm=document.getElementById("bet amount")
     cm.innerText = "현재 배팅액 : "+current_bet+" 만원"
 })
@@ -502,6 +529,34 @@ doubledown_button.addEventListener("click",()=>{
             sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
             dealer_sum=sum_cnt[0]
             dealer_ace_cnt=sum_cnt[1]
+        }
+    }    
+    if (current_details.hit_soft_17)
+    {
+        while (dealer_sum<=17 && dealer_ace_cnt>=1)
+        {
+            dealer_cards.push(current_deck.splice(Math.floor(Math.random()*current_deck.length),1)[0])
+            num = dealer_cards[dealer_cards.length-1]['num']
+            if (num==1){
+                dealer_ace_cnt+=1;
+                dealer_sum+=11;
+                sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+                dealer_sum=sum_cnt[0]
+                dealer_ace_cnt=sum_cnt[1]
+            }
+            else if(num>=10)
+            {
+                dealer_sum+=10;
+                sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+                dealer_sum=sum_cnt[0]
+                dealer_ace_cnt=sum_cnt[1]
+            }
+            else{
+                dealer_sum+=num;
+                sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+                dealer_sum=sum_cnt[0]
+                dealer_ace_cnt=sum_cnt[1]
+            }
         }
     }
     for (var i=0;i<player_cards.length;i++){
