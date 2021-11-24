@@ -278,6 +278,39 @@ function check_ace(sum,a_cnt){
         }
     }
 }
+function player_blackjack(bd){
+    sp=document.createElement("span")
+    sp.className='temp'
+    sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
+    sp.innerText="Blackjack!\n"+"이겼습니다..."+"\n"
+    bd.appendChild(sp)
+    btnlist = ['hit','stay','doubledown','surrender']
+    document.querySelectorAll("button").forEach(btn=>{
+        if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
+            btn.disabled=true;
+        }
+        if (btn.id == "up" ||btn.id == "down"){
+            btn.disabled=false;
+        }
+    })
+    current_result[2]+=1;
+    current_money+=current_bet*1.5;
+    cm=document.getElementById("current money")
+    cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
+    if (current_money>=current_bet)
+    {
+        start=document.getElementById("start");
+        start.disabled=false;
+    }
+    localStorage.removeItem("player");
+    let user = {
+        name: current_nickname,
+        money: current_money,
+        result: current_result
+    };
+    localStorage.setItem("player", JSON.stringify(user));
+}
+
 let start_button = document.querySelector("#start");
 start_button.addEventListener("click",()=>{
     clear();
@@ -320,6 +353,11 @@ start_button.addEventListener("click",()=>{
     show_card_img(bd,1,dealer_cards,player_cards,'dealer');
     show_card_img(bd,0,dealer_cards,player_cards,'player');
     show_card_img(bd,1,dealer_cards,player_cards,'player');
+    if(player_cards[0]['num']==1 && player_cards[1]['num']>=10 || player_cards[1]['num']==1 && player_cards[0]['num']>=10)
+    {
+        let bd = document.querySelector("body");
+        setTimeout(player_blackjack,1000,bd);
+    }
 })
 
 let hit_button = document.querySelector("#hit");
