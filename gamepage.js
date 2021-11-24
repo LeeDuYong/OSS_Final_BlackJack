@@ -294,7 +294,58 @@ function player_blackjack(bd){
         }
     })
     current_result[2]+=1;
-    current_money+=current_bet*1.5;
+    if(current_details.blackjack===true)
+    {
+        current_money+=current_bet*2;
+    }
+    else
+    {
+        current_money+=current_bet*1.5;
+    }
+    cm=document.getElementById("current money")
+    cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
+    if (current_money>=current_bet)
+    {
+        start=document.getElementById("start");
+        start.disabled=false;
+    }
+    localStorage.removeItem("player");
+    let user = {
+        name: current_nickname,
+        money: current_money,
+        result: current_result
+    };
+    localStorage.setItem("player", JSON.stringify(user));
+}
+
+function dealer_blackjack(bd){
+    document.getElementById("dealer_card1").remove();
+    for(var i=0;i<2;i++){
+        show_card_img(bd,i,dealer_cards,player_cards,'dealer',false)
+    }
+    sp=document.createElement("span")
+    sp.className='temp'
+    sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
+    sp.innerText="Dealer Blackjack!\n"+"졌습니다..."+"\n"
+    bd.appendChild(sp)
+    btnlist = ['hit','stay','doubledown','surrender']
+    document.querySelectorAll("button").forEach(btn=>{
+        if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
+            btn.disabled=true;
+        }
+        if (btn.id == "up" ||btn.id == "down"){
+            btn.disabled=false;
+        }
+    })
+    current_result[0]+=1;
+    if(current_details.blackjack===true)
+    {
+        current_money-=current_bet*2;
+    }
+    else
+    {
+        current_money-=current_bet*1.5;
+    }
     cm=document.getElementById("current money")
     cm.innerText = "현재 보유 금액 : "+current_money+" 만원\n전적 : "+current_result[2]+'승 '+current_result[0]+'패 '+current_result[1]+'무'
     if (current_money>=current_bet)
@@ -357,6 +408,11 @@ start_button.addEventListener("click",()=>{
     {
         let bd = document.querySelector("body");
         setTimeout(player_blackjack,1000,bd);
+    }
+    if(dealer_cards[0]['num']==1 && dealer_cards[1]['num']>=10 || dealer_cards[1]['num']==1 && dealer_cards[0]['num']>=10)
+    {
+        let bd = document.querySelector("body");
+        setTimeout(dealer_blackjack,1000,bd);
     }
 })
 
