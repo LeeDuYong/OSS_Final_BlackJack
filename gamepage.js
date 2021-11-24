@@ -7,7 +7,6 @@ let current_result= [0,0,0];
 let double=false;
 let current_nickname;
 let current_details;
-
 var startsound= new Audio("card_sound/cardPlace.mp3");
 var cardsound = new Audio("card_sound/cardSlide.mp3");
 
@@ -115,8 +114,16 @@ function game_end(bd,player_sum,dealer_sum){
         }
         else{
             if (dealer_sum==player_sum){
-                sp.innerText=sp.innerText+"비겼습니다."
-                current_result[1]+=1;
+                if (current_details.push)
+                {
+                    sp.innerText=sp.innerText+"비겼습니다."
+                    current_result[1]+=1;
+                }
+                else {
+                    sp.innerText=sp.innerText+"이겼습니다!"
+                    current_result[2]+=1;
+                    current_money+=current_bet*2;
+                }
             }
             else if (dealer_sum>player_sum){
                 sp.innerText=sp.innerText+"졌습니다..."
@@ -141,8 +148,16 @@ function game_end(bd,player_sum,dealer_sum){
             current_money+=current_bet}
         else{
             if (dealer_sum==player_sum){
-                sp.innerText=sp.innerText+"비겼습니다."
-                current_result[1]+=1;
+                if (current_details.push)
+                {
+                    sp.innerText=sp.innerText+"비겼습니다."
+                    current_result[1]+=1;
+                }
+                else {
+                    sp.innerText=sp.innerText+"이겼습니다!"
+                    current_result[2]+=1;
+                    current_money+=current_bet;
+                }
             }
             else if (dealer_sum>player_sum){
                 sp.innerText=sp.innerText+"졌습니다..."
@@ -157,7 +172,7 @@ function game_end(bd,player_sum,dealer_sum){
         }
     }
     bd.appendChild(sp)
-    btnlist = ['hit','stay','double down','surrender']
+    btnlist = ['hit','stay','doubledown','surrender']
     document.querySelectorAll("button").forEach(btn=>{
         if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
             btn.disabled=true;
@@ -184,7 +199,7 @@ function player_bust(bd,player_sum){
     sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
     sp.innerText="나의 카드 합 : "+player_sum+"\n"+"졌습니다..."+"\n"
     bd.appendChild(sp)
-    btnlist = ['hit','stay','double down','surrender']
+    btnlist = ['hit','stay','doubledown','surrender']
     document.querySelectorAll("button").forEach(btn=>{
         if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
             btn.disabled=true;
@@ -218,6 +233,15 @@ function player_surrender(bd){
     sp.style="color:white; position:absolute; top:250px;left:135px;font-size:25px"
     sp.innerText="Surrender\n"+"졌습니다..."+"\n"
     bd.appendChild(sp)
+    btnlist = ['hit','stay','doubledown','surrender']
+    document.querySelectorAll("button").forEach(btn=>{
+        if (btn.id == btnlist[0] || btn.id == btnlist[1] || btn.id == btnlist[2] || btn.id == btnlist[3]){
+            btn.disabled=true;
+        }
+        if (btn.id == "up" ||btn.id == "down"){
+            btn.disabled=false;
+        }
+    })
     current_result[0]+=1;
     current_money-=current_bet/2;
     cm=document.getElementById("current money")
@@ -333,6 +357,7 @@ stay_button.addEventListener("click",()=>{
     dealer_sum=sum_cnt[0]
     dealer_ace_cnt=sum_cnt[1]
     
+    
     while(dealer_sum<=16){
         dealer_cards.push(current_deck.splice(Math.floor(Math.random()*current_deck.length),1)[0])
         num = dealer_cards[dealer_cards.length-1]['num']
@@ -356,8 +381,37 @@ stay_button.addEventListener("click",()=>{
             dealer_sum=sum_cnt[0]
             dealer_ace_cnt=sum_cnt[1]
         }
+    }    
+    if (current_details.hit_soft_17)
+    {
+        while (dealer_sum<=17 && dealer_ace_cnt>=1)
+        {
+            dealer_cards.push(current_deck.splice(Math.floor(Math.random()*current_deck.length),1)[0])
+            num = dealer_cards[dealer_cards.length-1]['num']
+            if (num==1){
+                dealer_ace_cnt+=1;
+                dealer_sum+=11;
+                sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+                dealer_sum=sum_cnt[0]
+                dealer_ace_cnt=sum_cnt[1]
+            }
+            else if(num>=10)
+            {
+                dealer_sum+=10;
+                sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+                dealer_sum=sum_cnt[0]
+                dealer_ace_cnt=sum_cnt[1]
+            }
+            else{
+                dealer_sum+=num;
+                sum_cnt=check_ace(dealer_sum,dealer_ace_cnt)
+                dealer_sum=sum_cnt[0]
+                dealer_ace_cnt=sum_cnt[1]
+            }
+        }
     }
-
+    
+    
     for (var i=0;i<player_cards.length;i++){
         if(player_cards[i]['num']==1){
             player_sum+=11;
