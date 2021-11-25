@@ -61,12 +61,21 @@ function show_card_img(bd,idx,dealer_cards,player_cards,dorp,anim=true){
     img.src="card_imgs//"+a+"_"+b+".png";
     img.height=115;
     img.width=85;
+    
     img.className="rounded"
     if (dorp=='dealer'){
-        img.style = "position: absolute; top:105px; left:"+String((365+(idx)*17))+"px; opacity:0"
+        if (a==3){
+            img.style = "position: absolute; top:104px; left:"+String((365+(idx)*17))+"px; opacity:0"
+        }
+        else{
+            img.style = "position: absolute; top:105px; left:"+String((365+(idx)*17))+"px; opacity:0"
+        }
         img.id='dealer_card'+(idx+1);
     }
     else{
+        if (a==3){
+            img.style = "position: absolute; top:374px; left:"+String((365+(idx)*17))+"px; opacity:0"
+        }
         img.style = "position: absolute; top:375px; left:"+String((365+(idx)*17))+"px;opacity:0"
         img.id='player_card'+(idx+1);
     }
