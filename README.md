@@ -19,4 +19,4 @@ HIT, STAY 등의 버튼으로 게임을 진행할 수 있으며,
 ## 세부 규칙 설정 및 랭킹 페이지
 
 ## 게임 설치 및 실행
-git clone https://github.com/bansh123/OSS_Final_BlackJack.git을 하시고 npm install electron을 한 후 npm start를 하시면 실행을 할 수 있습니다.
+git clone https://github.com/bansh123/OSS_Final_BlackJack.git 을 하시고 npm install electron을 한 후 npm start를 하시면 실행을 할 수 있습니다.
