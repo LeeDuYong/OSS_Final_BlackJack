@@ -413,15 +413,15 @@ start_button.addEventListener("click",()=>{
     show_card_img(bd,1,dealer_cards,player_cards,'dealer');
     show_card_img(bd,0,dealer_cards,player_cards,'player');
     show_card_img(bd,1,dealer_cards,player_cards,'player');
-    if(player_cards[0]['num']==1 && player_cards[1]['num']>=10 || player_cards[1]['num']==1 && player_cards[0]['num']>=10)
-    {
-        let bd = document.querySelector("body");
-        setTimeout(player_blackjack,1000,bd);
-    }
     if(dealer_cards[0]['num']==1 && dealer_cards[1]['num']>=10 || dealer_cards[1]['num']==1 && dealer_cards[0]['num']>=10)
     {
         let bd = document.querySelector("body");
         setTimeout(dealer_blackjack,1000,bd);
+    }
+    else if(player_cards[0]['num']==1 && player_cards[1]['num']>=10 || player_cards[1]['num']==1 && player_cards[0]['num']>=10)
+    {
+        let bd = document.querySelector("body");
+        setTimeout(player_blackjack,1000,bd);
     }
 })
 

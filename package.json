@@ -1,6 +1,6 @@
 {
   "name": "oss_final_blackjack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Black jack game",
   "main": "main.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "electron": "^16.0.2"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.1"
   },
   "config": {
     "forge": {
