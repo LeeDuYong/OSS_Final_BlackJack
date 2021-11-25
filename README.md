@@ -19,4 +19,12 @@ HIT, STAY 등의 버튼으로 게임을 진행할 수 있으며,
 ## 세부 규칙 설정 및 랭킹 페이지
 
 ## 게임 설치 및 실행
-git clone https://github.com/bansh123/OSS_Final_BlackJack.git 을 하시고 npm install electron을 한 후 npm start를 하시면 실행을 할 수 있습니다.
+1) git clone 및 npm을 통한 설치 및 실행
+   
+   ```
+   git clone https://github.com/bansh123/OSS_Final_BlackJack.git  
+   npm install electron  
+   npm start
+2) 직접 다운로드  
+releases에 업로드 되어있는 BlackJack.zip 파일을 받으신 후,  
+압축해제 후 out/oss_final_blackjack-win32-x64/oss_final_blackjack.exe 를 실행하세요.
