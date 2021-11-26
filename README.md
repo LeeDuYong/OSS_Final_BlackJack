@@ -48,3 +48,6 @@ __BlackJack 2배__ 룰을 적용하면 플레이어나 딜러가 BlackJack일때
 2) 직접 다운로드  
 releases에 업로드 되어있는 BlackJack.zip 파일을 받으신 후,  
 압축해제 후 out/oss_final_blackjack-win32-x64/oss_final_blackjack.exe 를 실행하세요.
+
+### 데모 비디오 링크
+[link](https://youtu.be/bJI1P4LUKwc).
